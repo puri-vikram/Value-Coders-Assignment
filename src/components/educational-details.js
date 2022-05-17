@@ -1,21 +1,29 @@
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { connect } from "react-redux";
 import { nextStep, backStep } from "../redux/Steps/steps.actions";
-
+import { saveEduData } from "../redux/FormData/form-data.actions"
 function EducationalDetails(props) {
   const {
-    watch,
     register,
     handleSubmit,
-    setError,
     getValues,
     setValue,
-    clearErrors,
     formState: { errors },
   } = useForm();
 
+  React.useEffect(()=>{
+        let _data = props.edu_data
+        if(Object.keys(_data).length > 0){
+            setValue('course', _data.course, { shouldDirty: true })
+            setValue('college', _data.college, { shouldDirty: true })     
+            setValue('year', _data.year, { shouldDirty: true })
+            setValue('cgpa', _data.cgpa, { shouldDirty: true }) 
+        }
+    },[])
+
   const onSubmit = async (e) => {
+    props.saveEduData(getValues())
     props.nextStep()
   };
 
@@ -106,13 +114,15 @@ function EducationalDetails(props) {
 }
 const mapStateToProps = state => {
     return {
-      step: state.steps.step
+      step: state.steps.step,
+      edu_data: state.all_data.edu_data
     }
   }
 const mapDispatchToProps = (dispatch) => {
   return {
     nextStep: () => dispatch(nextStep()),
-    backStep: ()=> dispatch(backStep())
+    backStep: ()=> dispatch(backStep()),
+    saveEduData: (payload) => dispatch(saveEduData(payload)) 
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(EducationalDetails);

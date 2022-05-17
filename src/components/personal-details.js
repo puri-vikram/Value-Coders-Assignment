@@ -1,21 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { connect } from "react-redux";
 import { nextStep } from "../redux/Steps/steps.actions";
-
+import { saveProData } from "../redux/FormData/form-data.actions";
 function PersonalDetails(props) {
   const {
-    watch,
     register,
     handleSubmit,
-    setError,
     getValues,
     setValue,
-    clearErrors,
     formState: { errors },
   } = useForm();
 
+    useEffect(()=>{
+        let _data = props.pro_data
+        if(Object.keys(_data).length > 0){
+            setValue('fullname', _data.fullname, { shouldDirty: true })
+            setValue('email', _data.email, { shouldDirty: true })      
+        }
+    },[])
+  
   const onSubmit = async (e) => {
+    props.saveProData(getValues())
     props.nextStep()
   };
 
@@ -66,12 +72,14 @@ function PersonalDetails(props) {
 }
 const mapStateToProps = state => {
     return {
-      step: state.steps.step
+      step: state.steps.step,
+      pro_data: state.all_data.pro_data
     }
   }
 const mapDispatchToProps = (dispatch) => {
   return {
-    nextStep: () => dispatch(nextStep())
+    nextStep: () => dispatch(nextStep()),
+    saveProData: (payload) => dispatch(saveProData(payload)) 
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(PersonalDetails);

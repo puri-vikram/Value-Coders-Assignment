@@ -2,22 +2,32 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { connect } from "react-redux";
 import { nextStep, backStep } from "../redux/Steps/steps.actions";
+import { saveSoHobbies } from "../redux/FormData/form-data.actions";
 
 function SocialMediaHobbies(props) {
   const {
-    watch,
     register,
     handleSubmit,
     setError,
     getValues,
     setValue,
-    clearErrors,
     formState: { errors },
   } = useForm();
 
-  const onSubmit = async (e) => {
-    props.nextStep()
-  };
+    React.useEffect(()=>{
+        let _data = props.so_hobby
+        if(Object.keys(_data).length > 0){
+            setValue('linkedin', _data.linkedin, { shouldDirty: true })
+            setValue('github', _data.github, { shouldDirty: true })     
+            setValue('facebook', _data.facebook, { shouldDirty: true })
+            setValue('hobbies', _data.hobbies, { shouldDirty: true }) 
+        }
+    },[])
+
+    const onSubmit = async (e) => {
+        props.saveSoHobbies(getValues())
+        props.nextStep()
+    };
 
   return (
         <div className="mt-3">
@@ -102,13 +112,15 @@ function SocialMediaHobbies(props) {
 }
 const mapStateToProps = state => {
     return {
-      step: state.steps.step
+      step: state.steps.step,
+      so_hobby: state.all_data.so_hobby
     }
   }
 const mapDispatchToProps = (dispatch) => {
   return {
     nextStep: () => dispatch(nextStep()),
-    backStep: ()=> dispatch(backStep())
+    backStep: ()=> dispatch(backStep()),
+    saveSoHobbies: (payload) => dispatch(saveSoHobbies(payload)) 
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(SocialMediaHobbies);

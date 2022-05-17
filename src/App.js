@@ -23,12 +23,10 @@ function App(props) {
             <div className="col-12">
               <ul className="d-flex justify-content-between p-0 py-3 shadow">
                 {stepper.map((headings, i) => 
-                  <li className="list-unstyled d-flex align-items-center text-start mx-2">
-                    <span class={`badge bg-${step >= (i+1) ? 'primary' : 'dark'} rounded-circle me-1`}>
+                  <li key={i} className="list-unstyled d-flex align-items-center text-start mx-2">
+                    <span className={`badge bg-${step >= (i+1) ? 'primary' : 'dark'} rounded-circle me-1`}>
                         {step > (i + 1) ? <Icon.Check2 fontSize={10} color="white" /> : (i + 1)}
                     </span>
-                    
-
                     <span>{headings}</span>
                   </li>
                 )}
